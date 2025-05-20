@@ -50,11 +50,9 @@
 - `--use-gpu`: Use GPU acceleration (requires CuPy and CUDA GPU)
 - `help`: Show detailed help
 
-**Example:**
+**GPU Example:**
 
 ```python main_v3.py 60hz_sine.flac --use-gpu```
-
-IMAGE HERE
 
 ```
 Workers: 12 (CPU threads)
@@ -82,7 +80,96 @@ ENF Statistics:
   Processing Time: 9.89 seconds
 ```
 
-IMAGE HERE
+![Screenshot 2025-05-20 151224](https://github.com/user-attachments/assets/18b8148d-921d-4785-8169-dfa2bd1cca37)
+
+**CPU Example:**
+
+```python main_v3.py 60hz_sine.flac```
+
+```
+Workers: 12 (CPU threads)
+GPU: not enabled
+Extracting ENF from: 60hz_sine.flac
+Nominal frequency: 60.0 Hz
+Search tolerance: +/- 0.1 Hz
+Window length: 2.0 seconds
+Harmonics: [1, 2, 3]
+--------------------------------------------------
+Loaded audio directly: 1323000 samples at 22050 Hz
+Processed 1/59 windows (1.7%)
+Processed 2/59 windows (3.4%)
+Processed 3/59 windows (5.1%)
+Processed 4/59 windows (6.8%)
+Processed 5/59 windows (8.5%)
+Processed 6/59 windows (10.2%)
+Processed 7/59 windows (11.9%)
+Processed 8/59 windows (13.6%)
+Processed 9/59 windows (15.3%)
+Processed 10/59 windows (16.9%)
+Processed 11/59 windows (18.6%)
+Processed 12/59 windows (20.3%)
+Processed 13/59 windows (22.0%)
+Processed 14/59 windows (23.7%)
+Processed 15/59 windows (25.4%)
+Processed 16/59 windows (27.1%)
+Processed 17/59 windows (28.8%)
+Processed 18/59 windows (30.5%)
+Processed 19/59 windows (32.2%)
+Processed 20/59 windows (33.9%)
+Processed 21/59 windows (35.6%)
+Processed 22/59 windows (37.3%)
+Processed 23/59 windows (39.0%)
+Processed 24/59 windows (40.7%)
+Processed 25/59 windows (42.4%)
+Processed 26/59 windows (44.1%)
+Processed 27/59 windows (45.8%)
+Processed 28/59 windows (47.5%)
+Processed 29/59 windows (49.2%)
+Processed 30/59 windows (50.8%)
+Processed 31/59 windows (52.5%)
+Processed 32/59 windows (54.2%)
+Processed 33/59 windows (55.9%)
+Processed 34/59 windows (57.6%)
+Processed 35/59 windows (59.3%)
+Processed 36/59 windows (61.0%)
+Processed 37/59 windows (62.7%)
+Processed 38/59 windows (64.4%)
+Processed 39/59 windows (66.1%)
+Processed 40/59 windows (67.8%)
+Processed 41/59 windows (69.5%)
+Processed 42/59 windows (71.2%)
+Processed 43/59 windows (72.9%)
+Processed 44/59 windows (74.6%)
+Processed 45/59 windows (76.3%)
+Processed 46/59 windows (78.0%)
+Processed 47/59 windows (79.7%)
+Processed 48/59 windows (81.4%)
+Processed 49/59 windows (83.1%)
+Processed 50/59 windows (84.7%)
+Processed 51/59 windows (86.4%)
+Processed 52/59 windows (88.1%)
+Processed 53/59 windows (89.8%)
+Processed 54/59 windows (91.5%)
+Processed 55/59 windows (93.2%)
+Processed 56/59 windows (94.9%)
+Processed 57/59 windows (96.6%)
+Processed 58/59 windows (98.3%)
+Processed 59/59 windows (100.0%)
+ENF trace saved to 60hz_sine_enf_20250520151450.csv
+--------------------------------------------------
+ENF Statistics:
+  Duration: 59.0 seconds
+  Mean ENF: 59.959675 Hz
+  Std ENF: 0.000000 Hz
+  Min ENF: 59.959675 Hz
+  Max ENF: 59.959675 Hz
+  Mean Confidence: 0.502
+  Processing Time: 18.11 seconds
+```
+
+![Screenshot 2025-05-20 151702](https://github.com/user-attachments/assets/71853a79-ad8f-4759-8308-1cfa55400109)
+![Screenshot 2025-05-20 151636](https://github.com/user-attachments/assets/19167b36-0c53-474b-84dc-367e22371d86)
+
 
 ---
 
