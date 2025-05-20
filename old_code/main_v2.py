@@ -1,17 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-ENF (Electrical Network Frequency) Extraction using Adaptive Goertzel Algorithm
-
-This script extracts ENF traces from audio/video files using an adaptive Goertzel
-algorithm based on the methodology described in:
-- Jenkins, C. (2011). An investigative approach to configuring forensic electric network frequency databases.
-- Hua et al. (2021). Detection of Electric Network Frequency in Audio Recordings.
-- Su, H. (2014). Temporal and spatial alignment of multimedia signals.
-
-Author: Claude
-Date: 2025
-"""
 
 import numpy as np
 import librosa
