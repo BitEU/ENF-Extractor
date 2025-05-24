@@ -17,7 +17,6 @@ import warnings
 import concurrent.futures
 import datetime
 import time
-import itertools
 
 try:
     import cupy as cp
@@ -36,22 +35,12 @@ DEFAULT_OVERLAP = 0.5
 DEFAULT_HARMONICS = [1, 2, 3]
 DEFAULT_MEDIAN_FILTER_SIZE = 5
 DEFAULT_CONFIDENCE_THRESHOLD = 0.1
-
-# --- ENF Speed/Time-Scale Detection Defaults ---
-DEFAULT_CANDIDATE_ENF_FREQS = [50.0, 60.0]  # Hz, can be expanded if needed
-DEFAULT_MIN_SPEED_FACTOR = 0.5              # Minimum speed factor to check (e.g., 0.5x)
-DEFAULT_MAX_SPEED_FACTOR = 2.5              # Maximum speed factor to check (e.g., 2.5x)
-DEFAULT_SPEED_FACTOR_STEP = 0.01            # Step size for speed factor search
 # ------------------------------------
 
 class AdaptiveGoertzelENF:
     def __init__(self, sample_rate=DEFAULT_SAMPLE_RATE, nominal_freq=DEFAULT_NOMINAL_FREQ, 
                  freq_tolerance=DEFAULT_FREQ_TOLERANCE, window_length=DEFAULT_WINDOW_LENGTH, 
-                 overlap=DEFAULT_OVERLAP, harmonics=DEFAULT_HARMONICS,
-                 candidate_enf_freqs=DEFAULT_CANDIDATE_ENF_FREQS,
-                 min_speed_factor=DEFAULT_MIN_SPEED_FACTOR,
-                 max_speed_factor=DEFAULT_MAX_SPEED_FACTOR,
-                 speed_factor_step=DEFAULT_SPEED_FACTOR_STEP):
+                 overlap=DEFAULT_OVERLAP, harmonics=DEFAULT_HARMONICS):
         """
         Initialize the Adaptive Goertzel ENF extractor.
         
@@ -62,10 +51,6 @@ class AdaptiveGoertzelENF:
         - window_length: Analysis window length in seconds
         - overlap: Window overlap ratio (0-1)
         - harmonics: List of harmonics to analyze (1=fundamental, 2=second harmonic, etc.)
-        - candidate_enf_freqs: List of candidate ENF frequencies to consider for speed detection
-        - min_speed_factor: Minimum speed factor to check (e.g., 0.5x)
-        - max_speed_factor: Maximum speed factor to check (e.g., 2.5x)
-        - speed_factor_step: Step size for speed factor search
         """
         self.sample_rate = sample_rate
         self.nominal_freq = nominal_freq
@@ -73,12 +58,6 @@ class AdaptiveGoertzelENF:
         self.window_length = window_length
         self.overlap = overlap
         self.harmonics = harmonics
-
-        # Speed/ENF detection config
-        self.candidate_enf_freqs = candidate_enf_freqs
-        self.min_speed_factor = min_speed_factor
-        self.max_speed_factor = max_speed_factor
-        self.speed_factor_step = speed_factor_step
         
         # Calculate window parameters
         self.window_samples = int(window_length * sample_rate)
@@ -604,64 +583,6 @@ class AdaptiveGoertzelENF:
         
         plt.show()
 
-    def detect_speed_factor(self, enf_estimates, confidences, nominal_freq, freq_tolerance):
-        """
-        Detect if the ENF trace has been shifted due to speedup/slowdown.
-        Returns the most likely original ENF, detected speed factor, and a summary of candidates.
-        """
-        valid = confidences > 0.2
-        if np.sum(valid) < 5:
-            return nominal_freq, 1.0, []
-
-        observed = enf_estimates[valid]
-        factors = np.arange(self.min_speed_factor, self.max_speed_factor + self.speed_factor_step, self.speed_factor_step)
-        candidate_freqs = self.candidate_enf_freqs
-
-        best_score = -np.inf
-        best_result = (nominal_freq, 1.0, [])
-        candidates = []
-
-        for true_freq, factor in itertools.product(candidate_freqs, factors):
-            expected = true_freq * factor
-            mean_diff = np.mean(np.abs(observed - expected))
-            std_diff = np.std(observed - expected)
-            score = -mean_diff - std_diff
-            candidates.append({
-                'true_freq': true_freq,
-                'factor': factor,
-                'expected': expected,
-                'mean_diff': mean_diff,
-                'std_diff': std_diff,
-                'score': score
-            })
-            if score > best_score:
-                best_score = score
-                best_result = (true_freq, factor, candidates)
-
-        return best_result
-
-    def analyze_enf_and_speed(self, enf_estimates, confidences):
-        """
-        Analyze ENF trace for possible speedup/slowdown and report findings.
-        """
-        # Use the nominal frequency and tolerance from the instance
-        true_freq, factor, candidates = self.detect_speed_factor(
-            enf_estimates, confidences, self.nominal_freq, self.freq_tolerance
-        )
-        print("\n--- ENF Speed Analysis ---")
-        print(f"Detected ENF: {true_freq:.2f} Hz")
-        print(f"Detected speed factor: {factor:.3f}x")
-        if abs(factor - 1.0) > 0.05:
-            print(f"WARNING: Audio appears to be {'sped up' if factor > 1.0 else 'slowed down'} by ~{factor:.2f}x")
-            print(f"Observed ENF is {true_freq * factor:.2f} Hz, expected {true_freq:.2f} Hz")
-        else:
-            print("No significant speedup/slowdown detected.")
-        print("Top candidate ENF/factor pairs:")
-        for c in sorted(candidates, key=lambda x: -x['score'])[:5]:
-            print(f"  ENF: {c['true_freq']:.2f} Hz, factor: {c['factor']:.3f}x, observed: {c['expected']:.2f} Hz, mean diff: {c['mean_diff']:.4f}, score: {c['score']:.4f}")
-        print("--- End ENF Speed Analysis ---\n")
-        return true_freq, factor, candidates
-
 
 def main():
     # Custom help if user runs: python main_v1.py help
@@ -834,9 +755,6 @@ def main():
         
         # Save to CSV
         extractor.save_to_csv(time_stamps, processed_enf, confidences, args.output)
-
-        # --- ENF speed analysis ---
-        extractor.analyze_enf_and_speed(processed_enf, confidences)
         
         end_time = time.time()  # End timing
 
