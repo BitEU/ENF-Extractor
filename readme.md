@@ -2,6 +2,8 @@
 
 **ENF Extractor** is a Python tool for extracting Electrical Network Frequency (ENF) traces from audio and video files using an adaptive Goertzel algorithm. It supports robust ENF estimation, harmonic enhancement, confidence scoring, and exports results to CSV for further analysis. The tool is designed for forensic, research, and signal analysis applications.
 
+My objective for this project is to identify and generate frequency ranges for content, be it 50Hz of 60Hz, but also to figure out if a video was sped up or slowed down (audio taken in a 60Hz country sped up to 2X now registering as 120Hz).
+
 ---
 
 ## Features
