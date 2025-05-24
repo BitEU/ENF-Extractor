@@ -1,3 +1,30 @@
+r"""
+This script analyzes an audio file and prints the dominant frequency (in Hz) found in the file.
+
+Dependencies:
+- librosa
+- numpy
+
+Usage (command line):
+    python verifyHz.py <audio_file_path>
+
+Arguments:
+    <audio_file_path>   Path to the audio file to analyze (e.g., WAV, FLAC, MP3).
+
+Example:
+    python verifyHz.py C:\Users\USERNAME\Downloads\ENF\60hzhighdef.flac
+
+Description:
+    The script loads the specified audio file, computes its Fast Fourier Transform (FFT),
+    and identifies the frequency with the highest amplitude (dominant frequency).
+    The result is printed to the console.
+
+Note:
+    - Ensure the required dependencies are installed:
+        pip install librosa numpy
+"""
+
+import sys
 import librosa
 import numpy as np
 
@@ -18,5 +45,10 @@ def measure_frequency(audio_file):
     
     print(f"Dominant frequency: {peak_freq:.5f} Hz")
 
-# Use raw string for the file path to avoid unicode escape errors
-measure_frequency(r'C:\Users\Steven\Downloads\ENF\60hzhighdef.flac')
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: python verifyHz.py <audio_file_path>")
+        sys.exit(1)
+    # Accept Windows-style paths with backslashes from the command line
+    audio_file = sys.argv[1]
+    measure_frequency(audio_file)
